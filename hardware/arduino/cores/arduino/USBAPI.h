@@ -18,6 +18,9 @@ public:
 	void attach();
 	void detach();	// Serial port goes down too...
 	void poll();
+	void setState(void* d, int len);
+	//void getState();
+	int getState(void* d, int len);
 };
 extern USBDevice_ USBDevice;
 

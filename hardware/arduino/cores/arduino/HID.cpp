@@ -19,11 +19,11 @@
 #include "Platform.h"
 #include "USBAPI.h"
 #include "USBDesc.h"
-
+#define RAWHID_ENABLED 1
 #if defined(USBCON)
 #ifdef HID_ENABLED
 
-//#define RAWHID_ENABLED
+
 
 //	Singletons for mouse and keyboard
 
@@ -111,7 +111,7 @@ const u8 _hidReportDescriptor[] = {
 	0x06, LSB(RAWHID_USAGE_PAGE), MSB(RAWHID_USAGE_PAGE),	// 30
 	0x0A, LSB(RAWHID_USAGE), MSB(RAWHID_USAGE),
 
-	0xA1, 0x01,				// Collection 0x01
+	0xA1, 0x04,				// Collection 0x01
     0x85, 0x03,             // REPORT_ID (3)
 	0x75, 0x08,				// report size = 8 bits
 	0x15, 0x00,				// logical minimum = 0
@@ -131,9 +131,12 @@ const u8 _hidReportDescriptor[] = {
 extern const HIDDescriptor _hidInterface PROGMEM;
 const HIDDescriptor _hidInterface =
 {
-	D_INTERFACE(HID_INTERFACE,1,3,0,0),
+	D_INTERFACE(HID_INTERFACE,2,3,0,0),
 	D_HIDREPORT(sizeof(_hidReportDescriptor)),
-	D_ENDPOINT(USB_ENDPOINT_IN (HID_ENDPOINT_INT),USB_ENDPOINT_TYPE_INTERRUPT,0x40,0x01)
+	//D_ENDPOINT(USB_ENDPOINT_IN (HID_ENDPOINT_INT),USB_ENDPOINT_TYPE_INTERRUPT,0x40,0x01)
+	D_ENDPOINT(USB_ENDPOINT_IN (HID_ENDPOINT_INT),USB_ENDPOINT_TYPE_INTERRUPT,0x40,0x01),
+ 	D_ENDPOINT(USB_ENDPOINT_OUT (HID_ENDPOINT_INT1),USB_ENDPOINT_TYPE_INTERRUPT,0x40,0x01)
+
 };
 
 //================================================================================

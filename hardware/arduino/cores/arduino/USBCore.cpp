@@ -329,7 +329,8 @@ const u8 _initEndpoints[] =
 #endif
 
 #ifdef HID_ENABLED
-	EP_TYPE_INTERRUPT_IN		// HID_ENDPOINT_INT
+	EP_TYPE_INTERRUPT_IN,		// HID_ENDPOINT_INT
+	EP_TYPE_INTERRUPT_OUT
 #endif
 };
 
@@ -611,7 +612,7 @@ ISR(USB_GEN_vect)
 	{
 #ifdef CDC_ENABLED
 		USB_Flush(CDC_TX);				// Send a tx frame if found
-		if (USB_Available(CDC_RX))	// Handle received bytes (if any)
+		while (USB_Available(CDC_RX))	// Handle received bytes (if any)
 			Serial.accept();
 #endif
 		
@@ -640,7 +641,28 @@ USBDevice_ USBDevice;
 USBDevice_::USBDevice_()
 {
 }
+void USBDevice_::setState(void* d, int len)
+{
+	//uint8_t data[64]={0};
+	//int n=63;
+	u8* dst = (u8*)d;
+	HID_SendReport(3, dst, 64);
+}
 
+int USBDevice_::getState(void* d, int len)
+{
+	
+	
+	if  (USB_Available(5)){
+		u8* dst = (u8*)d;
+		while (len--)
+			*dst++ = USB_Recv(5);
+		return -1;
+	}else{
+		return 0;
+	}
+
+}
 void USBDevice_::attach()
 {
 	_usbConfiguration = 0;
@@ -664,6 +686,16 @@ void USBDevice_::attach()
 	UDCON = 0;							// enable attach resistor
 	
 	TX_RX_LED_INIT;
+
+
+	InitEP(5,EP_TYPE_INTERRUPT_OUT,EP_DOUBLE_64);	// init ep0
+	_usbConfiguration = 0;			// not configured yet
+	UEIENX = 1 << RXSTPE;			// Enable interrupts for ep0
+	
+	ReadWriteAllowed();
+
+
+
 }
 
 void USBDevice_::detach()
