@@ -125,6 +125,9 @@
 #define HID_PHYSICAL_DESCRIPTOR_TYPE			0x23
 
 
+//typedef void (*USBvoidLibFunc)(void);
+//USBvoidLibFunc willslibUSBLibFunc;
+
 //	Device
 typedef struct {
 	u8 len;				// 18

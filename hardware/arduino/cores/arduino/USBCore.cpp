@@ -19,6 +19,9 @@
 #include "Platform.h"
 #include "USBAPI.h"
 #include "USBDesc.h"
+#include "USBLibaryHID.h"
+
+
 
 #if defined(USBCON)
 
@@ -509,9 +512,16 @@ bool SendDescriptor(Setup& setup)
 //	Endpoint 0 interrupt
 ISR(USB_COM_vect)
 {
-    SetEP(0);
+
+
+	SetEP(0);
+
 	if (!ReceivedSetupInt())
 		return;
+
+
+	
+	
 
 	Setup setup;
 	Recv((u8*)&setup,8);
@@ -615,7 +625,11 @@ ISR(USB_GEN_vect)
 		while (USB_Available(CDC_RX))	// Handle received bytes (if any)
 			Serial.accept();
 #endif
-		
+		//#ifdef usblib_ENABLED
+	if(USB_Available(5)>0){
+		willslibUSBLib.Func();
+	}		
+//#endif
 		// check whether the one-shot period has elapsed.  if so, turn off the LED
 		if (TxLEDPulse && !(--TxLEDPulse))
 			TXLED0;
