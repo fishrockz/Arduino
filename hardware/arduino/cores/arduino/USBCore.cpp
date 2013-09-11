@@ -627,7 +627,8 @@ ISR(USB_GEN_vect)
 #endif
 		//#ifdef usblib_ENABLED
 	if(USB_Available(5)>0){
-		willslibUSBLib.Func();
+		if (USBDevice.USBDevice_Func !=0);
+			USBDevice.USBDevice_Func();
 	}		
 //#endif
 		// check whether the one-shot period has elapsed.  if so, turn off the LED
@@ -654,7 +655,13 @@ USBDevice_ USBDevice;
 
 USBDevice_::USBDevice_()
 {
+	USBDevice_Func = 0;
 }
+void USBDevice_::setFunc(void (*newFunc)())
+{
+	USBDevice_Func = newFunc;
+}
+
 void USBDevice_::setState(void* d, int len)
 {
 	//uint8_t data[64]={0};

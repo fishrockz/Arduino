@@ -11,10 +11,13 @@
 
 class USBDevice_
 {
+private:
+	
 public:
 	USBDevice_();
+	void (*USBDevice_Func)(void);
 	bool configured();
-
+	void setFunc(void (*newFunc)());
 	void attach();
 	void detach();	// Serial port goes down too...
 	void poll();
